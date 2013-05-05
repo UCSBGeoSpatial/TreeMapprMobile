@@ -1,36 +1,69 @@
 package com.goletavalleybeautiful.treetaggr;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.goletavalleybeautiful.treetaggr.locate.TreeLocation;
 import com.goletavalleybeautiful.treetaggr.locate.TreeLocation.LocationResult;
+import com.octo.android.robospice.SpiceManager;
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
+import com.goletavalleybeautiful.treetaggr.data.AgencyJsonRequest;
+import com.goletavalleybeautiful.treetaggr.data.JsonSpiceService;
+import com.goletavalleybeautiful.treetaggr.data.ListAgencies;
+import com.goletavalleybeautiful.treetaggr.data.Tree;
+import com.goletavalleybeautiful.treetaggr.data.TreeJsonPost;
 
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Context;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class TreeTagMain extends Activity {
+	private static final String JSON_CACHE_KEY = "agencies_json";
+	private SpiceManager spiceManager = new SpiceManager( JsonSpiceService.class );
+	
+	private ArrayAdapter< String > agenciesAdapter;
+	
 	private TextView latitudeField;
 	private TextView longitudeField;
+	private TextView commonNameField;
+	private TextView latinNameField;
+	private Spinner agencyField;
 
 	private Button gps_button;
+	private Button submit_button;
 	private TreeLocation myLocation;
+	
+	private Tree tree;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tree_tag_main);
-
+	    initUIComponents();
+    }
+	
+	private void initUIComponents() {
 		// Point to the UI elements
 	    latitudeField = (TextView) findViewById(R.id.TextView02);
 	    longitudeField = (TextView) findViewById(R.id.TextView04);
-	    gps_button = (Button) findViewById(R.id.button1);
+	    commonNameField = (EditText) findViewById(R.id.editComName);
+	    latinNameField = (EditText) findViewById(R.id.editLatinName);
 	    
+	    gps_button = (Button) findViewById(R.id.button1);
+	    submit_button = (Button) findViewById(R.id.button2);
+	    
+	    agencyField = (Spinner) findViewById(R.id.agencyList01);
 	    
 	    gps_button.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -38,7 +71,30 @@ public class TreeTagMain extends Activity {
 	    		}
 	    	});
 	    
-    }
+	    submit_button.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		tree = new Tree();
+	    		String[] latin = latinNameField.getText().toString().split(" ");
+	    		
+	    		//ADD CHECKS
+	    		
+	    		tree.setCommon_name(commonNameField.getText().toString());
+	    		tree.setGenus(latin[0]);
+	    		tree.setSpecies(latin[1]);
+	    		tree.setLatitude(Float.parseFloat(latitudeField.getText().toString()));
+	    		tree.setLongitude(Float.parseFloat(longitudeField.getText().toString()));
+	    		
+	    		//SUBMIT TOAST
+	    		Toast.makeText(getBaseContext(),
+	    				"Name: " + commonNameField.getText() +
+	    				"\nLatin Name: " + latinNameField.getText() +
+	    				"\nLat, Lon: " + latitudeField.getText() + " , " + longitudeField.getText() +
+	    				"\n Submitted",
+	    				Toast.LENGTH_LONG).show();
+	    		postTree( tree );
+	    		}	    		
+    	});
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -50,12 +106,15 @@ public class TreeTagMain extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+		spiceManager.start( this );
 
         // Check if the GPS setting is currently enabled on the device.
         // This verification should be done during onStart() because the system calls this method
         // when the user returns to the activity, which ensures the desired location provider is
         // enabled each time the activity resumes from the stopped state.
 		myLocation = new TreeLocation();
+		locationClick();
+		getAgencies();
 
     }
     
@@ -64,11 +123,69 @@ public class TreeTagMain extends Activity {
     	super.onPause();
     	myLocation.cancelTimer();
     }
+    
+    @Override
+    protected void onStop() {
+    	super.onStop();
+    	myLocation.cancelTimer();
+    	spiceManager.shouldStop();
+    }
 
+    //Get Agencies
+    private void getAgencies() {
+    	TreeTagMain.this.setProgressBarIndeterminateVisibility( true );
+    	spiceManager.execute( new AgencyJsonRequest(), JSON_CACHE_KEY, DurationInMillis.NEVER, new AgencyRequestListener() );
+    }
+    
+    private class AgencyRequestListener implements RequestListener< ListAgencies > {
+
+		@Override
+		public void onRequestFailure(SpiceException arg0) {
+			Toast.makeText(getBaseContext(), "Query failed :(", Toast.LENGTH_LONG)
+	        .show();
+			
+		}
+
+		@Override
+		public void onRequestSuccess(ListAgencies listAgencies) {
+			List<String> agencies = new ArrayList<String>();
+			agencies = listAgencies.getAgencyNames();
+			agenciesAdapter = new ArrayAdapter<String>(TreeTagMain.this, android.R.layout.simple_spinner_item, agencies);
+			agenciesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			agencyField.setAdapter(agenciesAdapter);
+		}
+    	
+    }
+    
+    //Post Tree
+    private void postTree( Tree tree ) {
+    	TreeTagMain.this.setProgressBarIndeterminateVisibility( true );
+    	TreeJsonPost request = new TreeJsonPost();
+    	request.setTree(tree);
+    	spiceManager.execute( request, "agencies_json", DurationInMillis.NEVER, new TreeRequestListener() );
+    }
+    
+    private class TreeRequestListener implements RequestListener< Tree > {
+
+		@Override
+		public void onRequestFailure(SpiceException arg0) {
+			Toast.makeText(getBaseContext(), "Query failed :(", Toast.LENGTH_LONG)
+	        .show();
+			
+		}
+
+		@Override
+		public void onRequestSuccess(Tree tree ) {
+
+		}
+    	
+    }
+    
+    //Get Location
 	private void locationClick() {
 
-		Boolean status = myLocation.getLocation(this, locationResult);
-		Toast.makeText(getBaseContext(), "Querying Location", Toast.LENGTH_LONG)
+		myLocation.getLocation(this, locationResult);
+		Toast.makeText(getBaseContext(), "Querying Location", Toast.LENGTH_SHORT)
         .show();
 	}
 	

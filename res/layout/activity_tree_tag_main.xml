@@ -15,7 +15,7 @@
 
     <EditText
         android:id="@+id/editComName"
-        android:layout_width="wrap_content"
+        android:layout_width="210dp"
         android:layout_height="wrap_content"
         android:ems="8"
         android:hint="Ficus" />
@@ -35,30 +35,26 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Ficus benjamina"
-        android:inputType="textPersonName" >
+        android:inputType="textPersonName" />
 
-        <requestFocus />
-    </EditText>
+    <TextView
+	        android:id="@+id/comAgencyField"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dip"
+	        android:layout_marginRight="5dip"
+	        android:text="Agency: "
+	        android:textSize="20dip" />
+	
+    <Spinner
+        android:id="@+id/agencyList01"
+        android:layout_width="214dp"
+        android:layout_height="50dp" />
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <TableRow
-            android:id="@+id/tableRowDiameter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-            
-            <TextView
-        	android:id="@+id/treeDiamField"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:layout_marginLeft="10dip"
-        	android:layout_marginRight="5dip"
-        	android:text="Trunk Diameter: "
-        	android:textSize="15dip" />
-            
-        </TableRow>
 
         <TableRow
             android:id="@+id/tableRowHeight"
@@ -76,6 +72,7 @@
             
             
         </TableRow>
+       
 
         <TableRow
             android:id="@+id/tableRowSpread"
@@ -142,10 +139,24 @@
         </TextView>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
         <Button
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Query" />
+            android:text="Refresh GPS" />
+        
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit" />
+        
+    </LinearLayout>
+
 
 </LinearLayout>
