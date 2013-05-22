@@ -1,22 +1,54 @@
 package com.goletavalleybeautiful.treetaggr.data;
 
+import java.util.Collection;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@DatabaseTable(tableName = "trees")
 public class Tree {
+	@DatabaseField(generatedId = true)
+	private int id;
+	
+	@DatabaseField
 	private int tree_type_id;
+	@DatabaseField
 	private int agency_id;
 	
+	@DatabaseField
 	private int status;
+	@DatabaseField
 	private float diameter_at_height;
+	@DatabaseField
 	private float height;
+	@DatabaseField
 	private float spread;
 	
+	@DatabaseField
 	private float longitude;
+	@DatabaseField
 	private float latitude;
 	
-	//get/set common name
+	private boolean sendstatus = false;
+	
+    // ============================================================================================
+    // Setters & Getters
+    // ============================================================================================  	
+	
+	// sent
+	public boolean wasSent() {
+		return sendstatus;
+	}
+	
+	public void sent() {
+		this.sendstatus = true;
+	}
+	
+	// common name
 	public int getTree_type_id(){
 		return tree_type_id;
 	}
@@ -25,7 +57,7 @@ public class Tree {
 		this.tree_type_id = ttype;
 	}
 	
-	//get/set agency
+	// agency
 	public int getAgency_id(){
 		return this.agency_id;
 	}
@@ -34,7 +66,7 @@ public class Tree {
 		this.agency_id = agency_id;
 	}
 	
-	//get/set DBH
+	// DBH
 	public Float getDiameter_at_height() {
 		return this.diameter_at_height;
 	}
@@ -43,7 +75,7 @@ public class Tree {
 		this.diameter_at_height = diameter_at_height;
 	}
 	
-	//get/set height
+	// height
 	public Float getHeight() {
 		return this.height;
 	}
@@ -53,7 +85,7 @@ public class Tree {
 	}
 	
 	
-	//get/set spread
+	// spread
 	public Float getSpread() {
 		return this.spread;
 	}
@@ -62,7 +94,7 @@ public class Tree {
 		this.spread = spread;
 	}
 	
-	//get/set status
+	// status
 	public int getStatus() {
 		return this.status;
 	}
@@ -71,7 +103,7 @@ public class Tree {
 		this.status = status;
 	}
 	
-	//get/set longitude
+	// longitude
 	public Float getLongitude() {
 		return this.longitude;
 	}
@@ -81,13 +113,21 @@ public class Tree {
 	}
 	
 	
-	//get/set latitude
+	// latitude
 	public Float getLatitude() {
 		return this.latitude;
 	}
 	
 	public void setLatitude(Float latitude) {
 		this.latitude = latitude;
+	}
+	
+    // ============================================================================================
+    // Database Stuff
+    // ============================================================================================   
+	
+	public Collection< Tree > getUnsentTrees(){
+		return this.unsent;
 	}
 	
 }

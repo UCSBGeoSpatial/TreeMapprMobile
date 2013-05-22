@@ -1,5 +1,6 @@
 package com.goletavalleybeautiful.treetaggr.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -12,14 +13,25 @@ import android.app.Application;
 
 import com.octo.android.robospice.SpringAndroidSpiceService;
 import com.octo.android.robospice.persistence.CacheManager;
-import com.octo.android.robospice.persistence.springandroid.json.jackson.JacksonObjectPersisterFactory;
+import com.octo.android.robospice.persistence.ormlite.InDatabaseObjectPersisterFactory;
+import com.octo.android.robospice.persistence.ormlite.RoboSpiceDatabaseHelper;
 
 public class JsonSpiceService extends SpringAndroidSpiceService {
+		
     @Override
     public CacheManager createCacheManager( Application application ) {
         CacheManager cacheManager = new CacheManager();
-        JacksonObjectPersisterFactory jacksonObjectPersisterFactory = new JacksonObjectPersisterFactory( application );
-        cacheManager.addPersister( jacksonObjectPersisterFactory );
+        List< Class< ? >> classCollection = new ArrayList< Class<? >>();
+        
+        //Persistent classes to track
+        classCollection.add( Tree.class );
+        classCollection.add( TreeType.class );
+        classCollection.add( Agency.class );
+        
+        RoboSpiceDatabaseHelper dbHelper = new RoboSpiceDatabaseHelper( application, "treetagg.db", 1);
+        InDatabaseObjectPersisterFactory dbObjectFactory = new InDatabaseObjectPersisterFactory( application, dbHelper, classCollection);
+        
+        cacheManager.addPersister( dbObjectFactory );
         return cacheManager;
     }
 

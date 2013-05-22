@@ -50,7 +50,16 @@
         	android:layout_marginRight="5dip"
         	android:text="Tree Height: "
         	android:textSize="15dip" />
-            
+
+            <EditText
+                android:id="@+id/editHeight1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="numberDecimal" >
+
+                <requestFocus />
+            </EditText>
             
         </TableRow>
        
@@ -68,8 +77,38 @@
         	android:layout_marginRight="5dip"
         	android:text="Spread: "
         	android:textSize="15dip" />
+
+            <EditText
+                android:id="@+id/editSpread1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="numberDecimal" />
             
         </TableRow>
+        
+        <TableRow
+        android:id="@+id/tableRowDBH"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+        
+        <TextView
+    	android:id="@+id/treeDBHField"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="10dip"
+    	android:layout_marginRight="5dip"
+    	android:text="DBH: "
+    	android:textSize="15dip" />
+
+	        <EditText
+	            android:id="@+id/editDBH1"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:ems="10"
+	            android:inputType="numberDecimal" />
+        
+    	</TableRow>
     </TableLayout>
     
     <LinearLayout

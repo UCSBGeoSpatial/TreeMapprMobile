@@ -42,6 +42,9 @@ public class TreeTagMain extends Activity {
 	private TextView latitudeField;
 	private TextView longitudeField;
 	private TextView accuracyField;
+	private EditText heightField;
+	private EditText spreadField;
+	private EditText dbhField;
 	private Spinner agencyField;
 	private Spinner treeTypeField;
 
@@ -105,6 +108,10 @@ public class TreeTagMain extends Activity {
 	private void initUIComponents() {
 		
 		//Assign variables to UI elements
+		heightField = (EditText) findViewById(R.id.editHeight1);
+		spreadField = (EditText) findViewById(R.id.editSpread1);
+		dbhField = (EditText) findViewById(R.id.editDBH1);
+		
 	    latitudeField = (TextView) findViewById(R.id.TextView02);
 	    longitudeField = (TextView) findViewById(R.id.TextView04);
 	    accuracyField = (TextView) findViewById(R.id.TextView06);
@@ -131,10 +138,14 @@ public class TreeTagMain extends Activity {
 	    		//Build tree to send
 	    		tree.setTree_type_id(ttype.getId());
 	    		tree.setAgency_id(agen.getId());
+	    		
+	    		tree.setDiameter_at_height(Float.parseFloat(dbhField.getText().toString()));
+	    		tree.setHeight(Float.parseFloat(heightField.getText().toString()));
+	    		tree.setSpread(Float.parseFloat(spreadField.getText().toString()));
 	    		tree.setLatitude(Float.parseFloat(latitudeField.getText().toString()));
 	    		tree.setLongitude(Float.parseFloat(longitudeField.getText().toString()));
 	    		
-	    		//SUBMIT TOAST
+	    		//Toast to submit
 	    		Toast.makeText(getBaseContext(),
 	    				"Name: " + ttype.toString() +
 	    				"\nLat, Lon: " + latitudeField.getText() + " , " + longitudeField.getText() +

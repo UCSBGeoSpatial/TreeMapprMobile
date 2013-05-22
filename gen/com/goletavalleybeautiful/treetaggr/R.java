@@ -24,25 +24,30 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int TextView01=0x7f080009;
-        public static final int TextView02=0x7f08000a;
-        public static final int TextView03=0x7f08000c;
-        public static final int TextView04=0x7f08000d;
-        public static final int TextView05=0x7f08000f;
-        public static final int TextView06=0x7f080010;
-        public static final int action_settings=0x7f080013;
+        public static final int TextView01=0x7f08000e;
+        public static final int TextView02=0x7f08000f;
+        public static final int TextView03=0x7f080011;
+        public static final int TextView04=0x7f080012;
+        public static final int TextView05=0x7f080014;
+        public static final int TextView06=0x7f080015;
+        public static final int action_settings=0x7f080018;
         public static final int agencyList01=0x7f080003;
-        public static final int button1=0x7f080011;
-        public static final int button2=0x7f080012;
+        public static final int button1=0x7f080016;
+        public static final int button2=0x7f080017;
         public static final int comAgencyField=0x7f080002;
         public static final int comNameField=0x7f080000;
-        public static final int linearLayout1=0x7f080008;
-        public static final int linearLayout2=0x7f08000b;
-        public static final int linearLayout3=0x7f08000e;
+        public static final int editDBH1=0x7f08000c;
+        public static final int editHeight1=0x7f080006;
+        public static final int editSpread1=0x7f080009;
+        public static final int linearLayout1=0x7f08000d;
+        public static final int linearLayout2=0x7f080010;
+        public static final int linearLayout3=0x7f080013;
+        public static final int tableRowDBH=0x7f08000a;
         public static final int tableRowHeight=0x7f080004;
-        public static final int tableRowSpread=0x7f080006;
+        public static final int tableRowSpread=0x7f080007;
+        public static final int treeDBHField=0x7f08000b;
         public static final int treeHeightField=0x7f080005;
-        public static final int treeSpreadField=0x7f080007;
+        public static final int treeSpreadField=0x7f080008;
         public static final int treeTypeList01=0x7f080001;
     }
     public static final class layout {
