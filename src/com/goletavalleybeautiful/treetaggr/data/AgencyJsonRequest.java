@@ -10,7 +10,7 @@ public class AgencyJsonRequest extends SpringAndroidSpiceRequest< ListAgencies >
 
     @Override
     public ListAgencies loadDataFromNetwork() throws Exception {
-        return getRestTemplate().getForObject( "http://192.168.1.5:3000/agencies.json", ListAgencies.class );
+        return getRestTemplate().getForObject( "http://ec2-184-169-238-244.us-west-1.compute.amazonaws.com:3000/agencies.json", ListAgencies.class );
     }
     
     

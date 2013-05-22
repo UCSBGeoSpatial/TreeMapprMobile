@@ -13,6 +13,7 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import com.goletavalleybeautiful.treetaggr.data.AgencyJsonRequest;
 import com.goletavalleybeautiful.treetaggr.data.JsonSpiceService;
 import com.goletavalleybeautiful.treetaggr.data.ListAgencies;
+import com.goletavalleybeautiful.treetaggr.data.ListTreeTypes;
 import com.goletavalleybeautiful.treetaggr.data.Tree;
 import com.goletavalleybeautiful.treetaggr.data.TreeJsonPost;
 
@@ -33,12 +34,13 @@ public class TreeTagMain extends Activity {
 	private SpiceManager spiceManager = new SpiceManager( JsonSpiceService.class );
 	
 	private ArrayAdapter< String > agenciesAdapter;
+	private ArrayAdapter< String > treeTypesAdapter;
 	
 	private TextView latitudeField;
 	private TextView longitudeField;
-	private TextView commonNameField;
-	private TextView latinNameField;
+	private TextView accuracyField;
 	private Spinner agencyField;
+	private Spinner treeTypeField;
 
 	private Button gps_button;
 	private Button submit_button;
@@ -54,17 +56,19 @@ public class TreeTagMain extends Activity {
     }
 	
 	private void initUIComponents() {
-		// Point to the UI elements
+		
+		//Assign variables to UI elements
 	    latitudeField = (TextView) findViewById(R.id.TextView02);
 	    longitudeField = (TextView) findViewById(R.id.TextView04);
-	    commonNameField = (EditText) findViewById(R.id.editComName);
-	    latinNameField = (EditText) findViewById(R.id.editLatinName);
+	    accuracyField = (TextView) findViewById(R.id.TextView06);
 	    
 	    gps_button = (Button) findViewById(R.id.button1);
 	    submit_button = (Button) findViewById(R.id.button2);
 	    
 	    agencyField = (Spinner) findViewById(R.id.agencyList01);
+	    treeTypeField = (Spinner) findViewById(R.id.treeTypeList01);
 	    
+	    //Setup button listeners
 	    gps_button.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
 	    		locationClick();
@@ -74,10 +78,8 @@ public class TreeTagMain extends Activity {
 	    submit_button.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
 	    		tree = new Tree();
-	    		String[] latin = latinNameField.getText().toString().split(" ");
 	    		
-	    		//ADD CHECKS
-	    		
+	    		//Build tree to send
 	    		tree.setCommon_name(commonNameField.getText().toString());
 	    		tree.setGenus(latin[0]);
 	    		tree.setSpecies(latin[1]);
@@ -136,12 +138,12 @@ public class TreeTagMain extends Activity {
     	TreeTagMain.this.setProgressBarIndeterminateVisibility( true );
     	spiceManager.execute( new AgencyJsonRequest(), JSON_CACHE_KEY, DurationInMillis.NEVER, new AgencyRequestListener() );
     }
-    
+    //Listener waits for service to return data
     private class AgencyRequestListener implements RequestListener< ListAgencies > {
 
 		@Override
 		public void onRequestFailure(SpiceException arg0) {
-			Toast.makeText(getBaseContext(), "Query failed :(", Toast.LENGTH_LONG)
+			Toast.makeText(getBaseContext(), "Query failed: " + arg0, Toast.LENGTH_LONG)
 	        .show();
 			
 		}
@@ -153,6 +155,32 @@ public class TreeTagMain extends Activity {
 			agenciesAdapter = new ArrayAdapter<String>(TreeTagMain.this, android.R.layout.simple_spinner_item, agencies);
 			agenciesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			agencyField.setAdapter(agenciesAdapter);
+		}
+    	
+    }
+    
+    //Get TreeTypes
+    private void getTreeTypes() {
+    	TreeTagMain.this.setProgressBarIndeterminateVisibility( true );
+    	spiceManager.execute( new AgencyJsonRequest(), JSON_CACHE_KEY, DurationInMillis.NEVER, new AgencyRequestListener() );
+    }
+    
+    private class TreeTypeRequestListener implements RequestListener< ListTreeTypes > {
+
+		@Override
+		public void onRequestFailure(SpiceException arg0) {
+			Toast.makeText(getBaseContext(), "Query failed :(", Toast.LENGTH_LONG)
+	        .show();
+			
+		}
+
+		@Override
+		public void onRequestSuccess(ListTreeTypes listTrees) {
+			List<String> treetypes = new ArrayList<String>();
+			treetypes = listTrees.getTreeTypeNames();
+			treeTypesAdapter = new ArrayAdapter<String>(TreeTagMain.this, android.R.layout.simple_spinner_item, treetypes);
+			treeTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			treeTypeField.setAdapter(treeTypesAdapter);
 		}
     	
     }
@@ -181,7 +209,7 @@ public class TreeTagMain extends Activity {
     	
     }
     
-    //Get Location
+    //Read Location
 	private void locationClick() {
 
 		myLocation.getLocation(this, locationResult);
@@ -194,17 +222,22 @@ public class TreeTagMain extends Activity {
             try {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
-                if (lat != 0.0 && lng != 0.0) {
-
-                    String sLat;
-                    String sLng;
-                    
-                    sLat = Double.toString(lat);
-                    sLng = Double.toString(lng);
-                    
-                    latitudeField.setText(sLat);
-                    longitudeField.setText(sLng);
-                } 
+            if (lat != 0.0 && lng != 0.0) {
+                String sLat;
+                String sLng;
+                String sAcc;
+                
+                if (location.hasAccuracy()) { 
+                	sAcc = Float.toString(location.getAccuracy()); 
+                	accuracyField.setText(sAcc);
+                	};
+                	
+                sLat = Double.toString(lat);
+                sLng = Double.toString(lng);
+                
+                latitudeField.setText(sLat);
+                longitudeField.setText(sLng);
+            } 
             }catch (Exception e) {
 
             }
