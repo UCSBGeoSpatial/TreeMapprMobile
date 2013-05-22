@@ -33,7 +33,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class TreeTagMain extends Activity {
-	private static final String JSON_CACHE_KEY = "agencies_json";
+	private static final String JSON_CACHE_KEY = "json";
 	private SpiceManager spiceManager = new SpiceManager( JsonSpiceService.class );
 	
 	private ArrayAdapter< Agency > agenciesAdapter;
@@ -132,6 +132,7 @@ public class TreeTagMain extends Activity {
 	    		tree.setCommon_name(ttype.getCommon_name());
 	    		tree.setGenus(ttype.getGenus());
 	    		tree.setSpecies(ttype.getSpecies());
+	    		tree.setAgency_id(agen.getId());
 	    		tree.setLatitude(Float.parseFloat(latitudeField.getText().toString()));
 	    		tree.setLongitude(Float.parseFloat(longitudeField.getText().toString()));
 	    		
@@ -192,7 +193,7 @@ public class TreeTagMain extends Activity {
 		@Override
 		public void onRequestSuccess(ListTreeTypes listTrees) {
 			List<TreeType> treetypes = new ArrayList<TreeType>();
-			treetypes = listTrees.getTreeTypes();
+			treetypes = listTrees.getTreetypes();
 			treeTypesAdapter = new ArrayAdapter<TreeType>(TreeTagMain.this, android.R.layout.simple_spinner_item, treetypes);
 			treeTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			treeTypeField.setAdapter(treeTypesAdapter);
