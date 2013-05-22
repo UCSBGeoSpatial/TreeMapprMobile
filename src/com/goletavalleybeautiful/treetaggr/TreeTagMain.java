@@ -10,12 +10,15 @@ import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
+import com.goletavalleybeautiful.treetaggr.data.Agency;
 import com.goletavalleybeautiful.treetaggr.data.AgencyJsonRequest;
 import com.goletavalleybeautiful.treetaggr.data.JsonSpiceService;
 import com.goletavalleybeautiful.treetaggr.data.ListAgencies;
 import com.goletavalleybeautiful.treetaggr.data.ListTreeTypes;
 import com.goletavalleybeautiful.treetaggr.data.Tree;
 import com.goletavalleybeautiful.treetaggr.data.TreeJsonPost;
+import com.goletavalleybeautiful.treetaggr.data.TreeType;
+import com.goletavalleybeautiful.treetaggr.data.TreeTypeJsonRequest;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -33,8 +36,8 @@ public class TreeTagMain extends Activity {
 	private static final String JSON_CACHE_KEY = "agencies_json";
 	private SpiceManager spiceManager = new SpiceManager( JsonSpiceService.class );
 	
-	private ArrayAdapter< String > agenciesAdapter;
-	private ArrayAdapter< String > treeTypesAdapter;
+	private ArrayAdapter< Agency > agenciesAdapter;
+	private ArrayAdapter< TreeType > treeTypesAdapter;
 	
 	private TextView latitudeField;
 	private TextView longitudeField;
@@ -48,13 +51,57 @@ public class TreeTagMain extends Activity {
 	
 	private Tree tree;
 	
+	
+    // ============================================================================================
+    // ACTIVITY LIFE CYCLE
+    // ============================================================================================
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tree_tag_main);
 	    initUIComponents();
     }
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.tree_tag_main, menu);
+		return true;
+	}
 	
+    @Override
+    protected void onStart() {
+        super.onStart();
+		spiceManager.start( this );
+
+        // Check if the GPS setting is currently enabled on the device.
+        // This verification should be done during onStart() because the system calls this method
+        // when the user returns to the activity, which ensures the desired location provider is
+        // enabled each time the activity resumes from the stopped state.
+		myLocation = new TreeLocation();
+		locationClick();
+		getAgencies();
+		getTreeTypes();
+    }
+    
+    @Override
+    protected void onPause() {
+    	super.onPause();
+    	myLocation.cancelTimer();
+    }
+    
+    @Override
+    protected void onStop() {
+    	super.onStop();
+    	myLocation.cancelTimer();
+    	spiceManager.shouldStop();
+    }
+
+    // ============================================================================================
+    // INNER CLASSES
+    // ============================================================================================   
+    
 	private void initUIComponents() {
 		
 		//Assign variables to UI elements
@@ -78,18 +125,19 @@ public class TreeTagMain extends Activity {
 	    submit_button.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
 	    		tree = new Tree();
+	    		TreeType ttype = (TreeType)treeTypeField.getSelectedItem();
+	    		Agency agen = (Agency)agencyField.getSelectedItem();
 	    		
 	    		//Build tree to send
-	    		tree.setCommon_name(commonNameField.getText().toString());
-	    		tree.setGenus(latin[0]);
-	    		tree.setSpecies(latin[1]);
+	    		tree.setCommon_name(ttype.getCommon_name());
+	    		tree.setGenus(ttype.getGenus());
+	    		tree.setSpecies(ttype.getSpecies());
 	    		tree.setLatitude(Float.parseFloat(latitudeField.getText().toString()));
 	    		tree.setLongitude(Float.parseFloat(longitudeField.getText().toString()));
 	    		
 	    		//SUBMIT TOAST
 	    		Toast.makeText(getBaseContext(),
-	    				"Name: " + commonNameField.getText() +
-	    				"\nLatin Name: " + latinNameField.getText() +
+	    				"Name: " + ttype.toString() +
 	    				"\nLat, Lon: " + latitudeField.getText() + " , " + longitudeField.getText() +
 	    				"\n Submitted",
 	    				Toast.LENGTH_LONG).show();
@@ -98,41 +146,7 @@ public class TreeTagMain extends Activity {
     	});
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.tree_tag_main, menu);
-		return true;
-	}
-	
-    @Override
-    protected void onStart() {
-        super.onStart();
-		spiceManager.start( this );
-
-        // Check if the GPS setting is currently enabled on the device.
-        // This verification should be done during onStart() because the system calls this method
-        // when the user returns to the activity, which ensures the desired location provider is
-        // enabled each time the activity resumes from the stopped state.
-		myLocation = new TreeLocation();
-		locationClick();
-		getAgencies();
-
-    }
-    
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	myLocation.cancelTimer();
-    }
-    
-    @Override
-    protected void onStop() {
-    	super.onStop();
-    	myLocation.cancelTimer();
-    	spiceManager.shouldStop();
-    }
-
+	// ============================================================================================   
     //Get Agencies
     private void getAgencies() {
     	TreeTagMain.this.setProgressBarIndeterminateVisibility( true );
@@ -150,19 +164,20 @@ public class TreeTagMain extends Activity {
 
 		@Override
 		public void onRequestSuccess(ListAgencies listAgencies) {
-			List<String> agencies = new ArrayList<String>();
-			agencies = listAgencies.getAgencyNames();
-			agenciesAdapter = new ArrayAdapter<String>(TreeTagMain.this, android.R.layout.simple_spinner_item, agencies);
+			List<Agency> agencies = new ArrayList<Agency>();
+			agencies = listAgencies.getAgencies();
+			agenciesAdapter = new ArrayAdapter<Agency>(TreeTagMain.this, android.R.layout.simple_spinner_item, agencies);
 			agenciesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			agencyField.setAdapter(agenciesAdapter);
 		}
     	
     }
-    
+	
+    // ============================================================================================   
     //Get TreeTypes
     private void getTreeTypes() {
     	TreeTagMain.this.setProgressBarIndeterminateVisibility( true );
-    	spiceManager.execute( new AgencyJsonRequest(), JSON_CACHE_KEY, DurationInMillis.NEVER, new AgencyRequestListener() );
+    	spiceManager.execute( new TreeTypeJsonRequest(), JSON_CACHE_KEY, DurationInMillis.NEVER, new TreeTypeRequestListener() );
     }
     
     private class TreeTypeRequestListener implements RequestListener< ListTreeTypes > {
@@ -176,15 +191,16 @@ public class TreeTagMain extends Activity {
 
 		@Override
 		public void onRequestSuccess(ListTreeTypes listTrees) {
-			List<String> treetypes = new ArrayList<String>();
-			treetypes = listTrees.getTreeTypeNames();
-			treeTypesAdapter = new ArrayAdapter<String>(TreeTagMain.this, android.R.layout.simple_spinner_item, treetypes);
+			List<TreeType> treetypes = new ArrayList<TreeType>();
+			treetypes = listTrees.getTreeTypes();
+			treeTypesAdapter = new ArrayAdapter<TreeType>(TreeTagMain.this, android.R.layout.simple_spinner_item, treetypes);
 			treeTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			treeTypeField.setAdapter(treeTypesAdapter);
 		}
     	
     }
     
+	// ============================================================================================   
     //Post Tree
     private void postTree( Tree tree ) {
     	TreeTagMain.this.setProgressBarIndeterminateVisibility( true );
@@ -209,6 +225,7 @@ public class TreeTagMain extends Activity {
     	
     }
     
+	// ============================================================================================   
     //Read Location
 	private void locationClick() {
 

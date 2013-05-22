@@ -1,13 +1,31 @@
 package com.goletavalleybeautiful.treetaggr.data;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.j256.ormlite.field.DatabaseField;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TreeType {
+	
+	//Class Variables
+	@DatabaseField(generatedId = true)
+	private int id;
+	@DatabaseField(index = true)
 	private String common_name;
+	@DatabaseField
 	private String species;
+	@DatabaseField
 	private String genus;
+	
+	TreeType() {
+		
+	}
+	
+	public String toString() {
+		return common_name + " - " + genus + " " + species;
+	}
+	
+	//Setters & Getters
 	public String getCommon_name() {
 		return common_name;
 	}

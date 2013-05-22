@@ -10,7 +10,8 @@ public class TreeTypeJsonRequest extends SpringAndroidSpiceRequest< ListTreeType
 
     @Override
     public ListTreeTypes loadDataFromNetwork() throws Exception {
-        return getRestTemplate().getForObject( "http://ec2-184-169-238-244.us-west-1.compute.amazonaws.com:3000/tree_types.json", ListTreeTypes.class );
+    //    return getRestTemplate().getForObject( "http://ec2-184-169-238-244.us-west-1.compute.amazonaws.com:3000/tree_types.json", ListTreeTypes.class );
+        return getRestTemplate().getForObject( "http://192.168.1.5:3000/tree_types.json", ListTreeTypes.class );
     }
     
     

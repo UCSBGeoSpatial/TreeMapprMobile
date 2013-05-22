@@ -20,7 +20,7 @@ public class ListTreeTypes {
 		return TreeTypenames;
 	}
 
-    public List< TreeType > gettreetypes() {
+    public List< TreeType > getTreeTypes() {
         return treetypes;
     }
 

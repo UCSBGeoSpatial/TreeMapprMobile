@@ -22,8 +22,10 @@ public class TreeJsonPost extends SpringAndroidSpiceRequest< Tree > {
 		
 		restTemplate = getRestTemplate();
 		
-		Tree response = restTemplate.postForObject("http://ec2-184-169-238-244.us-west-1.compute.amazonaws.com:3000/trees", tree, Tree.class);
+	//	Tree response = restTemplate.postForObject("http://ec2-184-169-238-244.us-west-1.compute.amazonaws.com:3000/trees", tree, Tree.class);
+		Tree response = restTemplate.postForObject("http://192.168.1.5:3000/trees", tree, Tree.class);
+
 		return response;
-		}
+	}
     
 }

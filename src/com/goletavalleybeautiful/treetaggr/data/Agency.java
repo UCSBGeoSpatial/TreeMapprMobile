@@ -8,6 +8,10 @@ public class Agency {
 	private String shortname;
 	private String name;
 	
+	public String toString() {
+		return shortname + " - " + name;
+	}
+	
 	public String getName() {
 		return name;
 	}
