@@ -26,6 +26,10 @@ public class TreeType {
 	}
 	
 	//Setters & Getters
+	public int getId(){
+		return id;
+	}
+	
 	public String getCommon_name() {
 		return common_name;
 	}

@@ -5,9 +5,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Tree {
-	private String common_name;
-	private String genus;
-	private String species;
+	private int tree_type_id;
 	private int agency_id;
 	
 	private int status;
@@ -19,31 +17,12 @@ public class Tree {
 	private float latitude;
 	
 	//get/set common name
-	public String getCommon_name() {
-		return this.common_name;
+	public int getTree_type_id(){
+		return tree_type_id;
 	}
 	
-	public void setCommon_name(String common_name) {
-		this.common_name = common_name;
-	}	
-	
-	
-	//get/set genus
-	public String getGenus() {
-		return this.genus;
-	}
-	
-	public void setGenus(String genus) {
-		this.genus = genus;
-	}
-	
-	//get/set species
-	public String getSpecies() {
-		return this.species;
-	}
-	
-	public void setSpecies(String species) {
-		this.species = species;
+	public void setTree_type_id( int ttype ){
+		this.tree_type_id = ttype;
 	}
 	
 	//get/set agency
