@@ -1,5 +1,6 @@
-package com.goletavalleybeautiful.treetaggr.data;
+package com.goletavalleybeautiful.treetaggr.requests;
 
+import com.goletavalleybeautiful.treetaggr.data.ListAgencies;
 import com.octo.android.robospice.request.springandroid.SpringAndroidSpiceRequest;
 
 public class AgencyJsonRequest extends SpringAndroidSpiceRequest< ListAgencies > {

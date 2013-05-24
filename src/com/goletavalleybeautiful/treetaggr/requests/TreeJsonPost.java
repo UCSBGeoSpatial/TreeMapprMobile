@@ -1,7 +1,8 @@
-package com.goletavalleybeautiful.treetaggr.data;
+package com.goletavalleybeautiful.treetaggr.requests;
 
 import org.springframework.web.client.RestTemplate;
 
+import com.goletavalleybeautiful.treetaggr.data.Tree;
 import com.octo.android.robospice.request.springandroid.SpringAndroidSpiceRequest;
 
 public class TreeJsonPost extends SpringAndroidSpiceRequest< Tree > {

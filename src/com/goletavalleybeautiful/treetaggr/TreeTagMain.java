@@ -6,19 +6,20 @@ import java.util.List;
 
 import com.goletavalleybeautiful.treetaggr.locate.TreeLocation;
 import com.goletavalleybeautiful.treetaggr.locate.TreeLocation.LocationResult;
+import com.goletavalleybeautiful.treetaggr.persist.TreeDataSource;
+import com.goletavalleybeautiful.treetaggr.requests.AgencyJsonRequest;
+import com.goletavalleybeautiful.treetaggr.requests.TreeJsonPost;
+import com.goletavalleybeautiful.treetaggr.requests.TreeTypeJsonRequest;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.goletavalleybeautiful.treetaggr.data.Agency;
-import com.goletavalleybeautiful.treetaggr.data.AgencyJsonRequest;
 import com.goletavalleybeautiful.treetaggr.data.JsonSpiceService;
 import com.goletavalleybeautiful.treetaggr.data.ListAgencies;
 import com.goletavalleybeautiful.treetaggr.data.ListTreeTypes;
 import com.goletavalleybeautiful.treetaggr.data.Tree;
-import com.goletavalleybeautiful.treetaggr.data.TreeJsonPost;
 import com.goletavalleybeautiful.treetaggr.data.TreeType;
-import com.goletavalleybeautiful.treetaggr.data.TreeTypeJsonRequest;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -35,6 +36,8 @@ import android.widget.Toast;
 public class TreeTagMain extends Activity {
 	private static final String JSON_CACHE_KEY = "json";
 	private SpiceManager spiceManager = new SpiceManager( JsonSpiceService.class );
+	private TreeDataSource treeData = new TreeDataSource( this );
+	private ArrayList< Tree > queue;
 	
 	private ArrayAdapter< Agency > agenciesAdapter;
 	private ArrayAdapter< TreeType > treeTypesAdapter;
@@ -50,6 +53,7 @@ public class TreeTagMain extends Activity {
 
 	private Button gps_button;
 	private Button submit_button;
+	private Button queue_button;
 	private TreeLocation myLocation;
 	
 	private Tree tree;
@@ -83,6 +87,8 @@ public class TreeTagMain extends Activity {
         // when the user returns to the activity, which ensures the desired location provider is
         // enabled each time the activity resumes from the stopped state.
 		myLocation = new TreeLocation();
+		treeData.open();
+		queue = treeData.getQueue();
 		locationClick();
 		getAgencies();
 		getTreeTypes();
@@ -116,11 +122,15 @@ public class TreeTagMain extends Activity {
 	    longitudeField = (TextView) findViewById(R.id.TextView04);
 	    accuracyField = (TextView) findViewById(R.id.TextView06);
 	    
-	    gps_button = (Button) findViewById(R.id.button1);
-	    submit_button = (Button) findViewById(R.id.button2);
+	    gps_button = (Button) findViewById(R.id.buttonGPS);
+	    submit_button = (Button) findViewById(R.id.buttonSubmit);
+	    queue_button = (Button) findViewById(R.id.buttonQueue);
 	    
 	    agencyField = (Spinner) findViewById(R.id.agencyList01);
 	    treeTypeField = (Spinner) findViewById(R.id.treeTypeList01);
+	    
+	    //Update queue size
+	    if (queue != null) {queue_button.setText("Queue ( " + getString(queue.size()) + ")");}
 	    
 	    //Setup button listeners
 	    gps_button.setOnClickListener(new View.OnClickListener(){
@@ -154,6 +164,13 @@ public class TreeTagMain extends Activity {
 	    		postTree( tree );
 	    		}	    		
     	});
+	    queue_button.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		for ( Tree tr : queue ){
+	    			postTree( tr );
+	    		}
+	    		}
+	    	});
 	}
 
 	// ============================================================================================   
@@ -216,21 +233,29 @@ public class TreeTagMain extends Activity {
     	TreeTagMain.this.setProgressBarIndeterminateVisibility( true );
     	TreeJsonPost request = new TreeJsonPost();
     	request.setTree(tree);
-    	spiceManager.execute( request, "agencies_json", DurationInMillis.NEVER, new TreeRequestListener() );
+    	spiceManager.execute( request, JSON_CACHE_KEY, DurationInMillis.NEVER, new TreeRequestListener() );
     }
     
     private class TreeRequestListener implements RequestListener< Tree > {
 
 		@Override
 		public void onRequestFailure(SpiceException arg0) {
-			Toast.makeText(getBaseContext(), "Query failed :(", Toast.LENGTH_LONG)
+			Toast.makeText(getBaseContext(), "Couldn't send tree, queueing!", Toast.LENGTH_LONG)
 	        .show();
-			
+			treeData.enqueueTree(tree);
+			queue = treeData.getQueue();
 		}
 
 		@Override
-		public void onRequestSuccess(Tree tree ) {
-
+		public void onRequestSuccess( Tree tree ) {
+			if (treeData.dequeueTree(tree) == 0){
+				Toast.makeText(getBaseContext(), "Tree submitted and dequeued", Toast.LENGTH_LONG)
+		        .show();
+			}
+			else{
+				Toast.makeText(getBaseContext(), "Tree submitted", Toast.LENGTH_LONG)
+		        .show();				
+			}
 		}
     	
     }

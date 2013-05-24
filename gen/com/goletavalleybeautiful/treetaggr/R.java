@@ -30,10 +30,11 @@ public final class R {
         public static final int TextView04=0x7f080012;
         public static final int TextView05=0x7f080014;
         public static final int TextView06=0x7f080015;
-        public static final int action_settings=0x7f080018;
+        public static final int action_settings=0x7f080019;
         public static final int agencyList01=0x7f080003;
-        public static final int button1=0x7f080016;
-        public static final int button2=0x7f080017;
+        public static final int buttonGPS=0x7f080016;
+        public static final int buttonQueue=0x7f080018;
+        public static final int buttonSubmit=0x7f080017;
         public static final int comAgencyField=0x7f080002;
         public static final int comNameField=0x7f080000;
         public static final int editDBH1=0x7f08000c;

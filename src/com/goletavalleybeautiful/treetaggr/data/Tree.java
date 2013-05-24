@@ -1,51 +1,44 @@
 package com.goletavalleybeautiful.treetaggr.data;
 
-import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@DatabaseTable(tableName = "trees")
 public class Tree {
-	@DatabaseField(generatedId = true)
 	private int id;
 	
-	@DatabaseField
+	
 	private int tree_type_id;
-	@DatabaseField
+	
 	private int agency_id;
 	
-	@DatabaseField
+	
 	private int status;
-	@DatabaseField
+	
 	private float diameter_at_height;
-	@DatabaseField
+	
 	private float height;
-	@DatabaseField
+	
 	private float spread;
 	
-	@DatabaseField
+	
 	private float longitude;
-	@DatabaseField
+	
 	private float latitude;
 	
-	private boolean sendstatus = false;
 	
     // ============================================================================================
     // Setters & Getters
     // ============================================================================================  	
 	
-	// sent
-	public boolean wasSent() {
-		return sendstatus;
+	// id
+	public int showId() {
+		return this.id;
 	}
 	
-	public void sent() {
-		this.sendstatus = true;
+	public void setId( int i ){
+		this.id = i;
 	}
 	
 	// common name
@@ -126,8 +119,6 @@ public class Tree {
     // Database Stuff
     // ============================================================================================   
 	
-	public Collection< Tree > getUnsentTrees(){
-		return this.unsent;
-	}
+
 	
 }

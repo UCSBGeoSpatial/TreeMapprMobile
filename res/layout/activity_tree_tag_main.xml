@@ -131,7 +131,7 @@
             android:id="@+id/TextView02"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="unknown"
+            android:text="0.0"
             android:textSize="20dip" />
     </LinearLayout>
 
@@ -154,7 +154,7 @@
             android:id="@+id/TextView04"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="unknown"
+            android:text="0.0"
             android:textSize="20dip" >
         </TextView>
     </LinearLayout>
@@ -189,16 +189,22 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/buttonGPS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Refresh GPS" />
-        
+
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/buttonSubmit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Submit" />
+        
+        <Button
+            android:id="@+id/buttonQueue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear Queue" />
         
     </LinearLayout>
 
