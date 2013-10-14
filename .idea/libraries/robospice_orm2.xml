@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="robospice-orm">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/robospice-orm/ormlite-android-4.42.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/robospice-orm/robospice-ormlite-1.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/robospice-orm/ormlite-core-4.42.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -10,10 +10,12 @@ import com.goletavalleybeautiful.treetaggr.persist.TreeDataSource;
 import com.goletavalleybeautiful.treetaggr.requests.AgencyJsonRequest;
 import com.goletavalleybeautiful.treetaggr.requests.TreeJsonPost;
 import com.goletavalleybeautiful.treetaggr.requests.TreeTypeJsonRequest;
+
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
+
 import com.goletavalleybeautiful.treetaggr.data.Agency;
 import com.goletavalleybeautiful.treetaggr.data.JsonSpiceService;
 import com.goletavalleybeautiful.treetaggr.data.ListAgencies;
